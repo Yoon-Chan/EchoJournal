@@ -1,6 +1,7 @@
 package com.chan.echojournal.echos.presentation.echos
 
 import com.chan.echojournal.echos.presentation.echos.models.EchoFilterChip
+import com.chan.echojournal.echos.presentation.echos.models.TrackSizeInfo
 import com.chan.echojournal.echos.presentation.models.MoodUI
 
 sealed interface EchosAction {
@@ -14,4 +15,7 @@ sealed interface EchosAction {
     data object OnFabLongClick : EchosAction
     data object OnSettingsClick : EchosAction
     data class OnRemoveFilters(val filterType: EchoFilterChip) : EchosAction
+    data class OnPlayEchoClick(val echoId: Int): EchosAction
+    data object OnPauseClick: EchosAction
+    data class OnTrackSizeAvailable(val trackSizeInfo: TrackSizeInfo): EchosAction
 }
