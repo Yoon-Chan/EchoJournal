@@ -6,6 +6,7 @@ import com.chan.echojournal.R
 import com.chan.echojournal.core.presentation.designystem.dropdowns.Selectable
 import com.chan.echojournal.core.presentation.util.UiText
 import com.chan.echojournal.echos.EchosEvent
+import com.chan.echojournal.echos.domain.recording.VoiceRecorder
 import com.chan.echojournal.echos.presentation.echos.models.AudioCaptureMethod
 import com.chan.echojournal.echos.presentation.echos.models.EchoFilterChip
 import com.chan.echojournal.echos.presentation.echos.models.MoodChipContent
@@ -22,7 +23,9 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-class EchosViewModel : ViewModel() {
+class EchosViewModel constructor(
+    private val voiceRecorder: VoiceRecorder
+) : ViewModel() {
 
     private var hasLoadedInitialData = false
 
