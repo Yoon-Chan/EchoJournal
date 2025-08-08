@@ -31,10 +31,10 @@ fun EchoPlaybackButton(
             when (playbackState) {
                 PlaybackState.PLAYING -> onPlayClick
                 PlaybackState.PAUSED,
-                PlaybackState.STOPPED -> onPlayClick
+                PlaybackState.STOPPED -> onPauseClick
             },
         colors = colors,
-        modifier = Modifier.defaultShadow()
+        modifier = modifier.defaultShadow()
     ) {
         Icon(
             imageVector = when (playbackState) {

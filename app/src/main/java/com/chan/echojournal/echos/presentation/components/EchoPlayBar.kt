@@ -97,7 +97,7 @@ private fun EchoPlayBarPreview() {
             powerRatios = ratios,
             trackColor = MoodUI.SAD.colorSet.desaturated,
             trackFillColor = MoodUI.SAD.colorSet.vivid,
-            playerProgress = { 0.32f },
+            playerProgress = { 0.1f },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(15.dp)
