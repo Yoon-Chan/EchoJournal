@@ -1,5 +1,8 @@
 package com.chan.echojournal.echos.presentation.echos
 
+import android.Manifest
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,17 +20,36 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.chan.echojournal.core.presentation.designystem.theme.EchoJournalTheme
 import com.chan.echojournal.core.presentation.designystem.theme.bgGradient
+import com.chan.echojournal.core.presentation.util.ObserveAsEvents
+import com.chan.echojournal.echos.EchosEvent
 import com.chan.echojournal.echos.presentation.echos.components.EchoFilterRow
 import com.chan.echojournal.echos.presentation.echos.components.EchoList
 import com.chan.echojournal.echos.presentation.echos.components.EchoRecordFloatingActionButton
 import com.chan.echojournal.echos.presentation.echos.components.EchosEmptyBackground
 import com.chan.echojournal.echos.presentation.echos.components.EchosTopBar
+import com.chan.echojournal.echos.presentation.echos.models.AudioCaptureMethod
 
 @Composable
 fun EchosRoot(
     viewModel: EchosViewModel = viewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted && state.currentCaptureMethod == AudioCaptureMethod.STANDARD) {
+            viewModel.onAction(EchosAction.OnAudioPermissionGranted)
+        }
+    }
+
+    ObserveAsEvents(viewModel.events) { event ->
+        when (event) {
+            is EchosEvent.RequestAudioPermission -> {
+                permissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
+            }
+        }
+    }
 
     EchosScreen(
         state = state,
@@ -66,7 +88,7 @@ fun EchosScreen(
         ) {
             EchoFilterRow(
                 moodChipContent = state.moodChipContent,
-                hasActiveMoodFilters =  state.hasActiveMoodFilters,
+                hasActiveMoodFilters = state.hasActiveMoodFilters,
                 selectedEchoFilterChip = state.selectedEchoFilterChip,
                 moods = state.moods,
                 topicChipTitle = state.topicChipTitle,
@@ -87,6 +109,7 @@ fun EchosScreen(
                         color = MaterialTheme.colorScheme.primary
                     )
                 }
+
                 !state.hasEchosRecord -> {
                     EchosEmptyBackground(
                         modifier = Modifier
@@ -94,6 +117,7 @@ fun EchosScreen(
                             .fillMaxWidth()
                     )
                 }
+
                 else -> {
                     EchoList(
                         sections = state.echoDaySections,
@@ -104,7 +128,7 @@ fun EchosScreen(
                             onAction(EchosAction.OnPauseClick)
                         },
                         onTrackSizeAvailable = { trackSizeInfo ->
-                           onAction(EchosAction.OnTrackSizeAvailable(trackSizeInfo))
+                            onAction(EchosAction.OnTrackSizeAvailable(trackSizeInfo))
                         }
                     )
                 }
