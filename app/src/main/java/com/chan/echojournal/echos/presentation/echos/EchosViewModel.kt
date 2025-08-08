@@ -89,6 +89,10 @@ class EchosViewModel : ViewModel() {
                     )
                 }
             }
+
+            EchosAction.OnPauseClick -> {}
+            is EchosAction.OnPlayEchoClick -> {}
+            is EchosAction.OnTrackSizeAvailable -> {}
         }
     }
 
