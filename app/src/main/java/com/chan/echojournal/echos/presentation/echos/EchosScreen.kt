@@ -14,6 +14,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -31,6 +32,7 @@ import com.chan.echojournal.echos.presentation.echos.components.EchosEmptyBackgr
 import com.chan.echojournal.echos.presentation.echos.components.EchosTopBar
 import com.chan.echojournal.echos.presentation.echos.models.AudioCaptureMethod
 import com.chan.echojournal.echos.presentation.echos.models.RecordingState
+import com.chan.echojournal.echos.presentation.util.isAppInForeground
 import org.koin.androidx.compose.koinViewModel
 import timber.log.Timber
 
@@ -68,6 +70,12 @@ fun EchosRoot(
         }
     }
 
+    val isAppInForeground by isAppInForeground()
+    LaunchedEffect(isAppInForeground, state.recordingState) {
+        if(state.recordingState == RecordingState.NORMAL_CAPTURE && !isAppInForeground) {
+            viewModel.onAction(EchosAction.OnPauseRecordingClick)
+        }
+    }
     EchosScreen(
         state = state,
         onAction = viewModel::onAction
