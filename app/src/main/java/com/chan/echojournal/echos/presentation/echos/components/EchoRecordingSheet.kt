@@ -41,6 +41,7 @@ import com.chan.echojournal.core.presentation.designystem.theme.EchoJournalTheme
 import com.chan.echojournal.core.presentation.designystem.theme.Microphone
 import com.chan.echojournal.core.presentation.designystem.theme.Pause
 import com.chan.echojournal.core.presentation.designystem.theme.buttonGradient
+import com.chan.echojournal.core.presentation.designystem.theme.buttonGradientIsPressed
 import com.chan.echojournal.core.presentation.designystem.theme.primary90
 import com.chan.echojournal.core.presentation.designystem.theme.primary95
 
@@ -138,53 +139,26 @@ fun SheetContent(
                 )
             }
 
-            val interactionSource = remember {
-                MutableInteractionSource()
-            }
-            val isPressed by interactionSource.collectIsPressedAsState()
-            Box(
-                modifier = Modifier
-                    .size(primaryBubbleSize)
-                    .background(
-                        color = if (isRecording) {
-                            MaterialTheme.colorScheme.primary95
-                        } else Color.Transparent,
-                        shape = CircleShape
+            EchoBubbleFloatingActionButton(
+                showBubble = isRecording,
+                onClick = if(isRecording) onCompleteRecording else onResumeClick,
+                icon = {
+                    Icon(
+                        imageVector = if (isRecording) {
+                            Icons.Default.Check
+                        } else {
+                            Icons.Default.Microphone
+                        },
+                        contentDescription = if (isRecording) {
+                            stringResource(R.string.finish_recording)
+                        } else {
+                            stringResource(R.string.resume_recording)
+                        },
+                        tint = MaterialTheme.colorScheme.onPrimaryContainer
                     )
-                    .padding(10.dp)
-                    .background(
-                        color = if (isRecording) {
-                            MaterialTheme.colorScheme.primary90
-                        } else Color.Transparent,
-                        shape = CircleShape
-                    )
-                    .padding(16.dp)
-                    .background(
-                        brush = MaterialTheme.colorScheme.buttonGradient,
-                        shape = CircleShape
-                    )
-                    .clip(CircleShape)
-                    .clickable(
-                        indication = LocalIndication.current,
-                        interactionSource = interactionSource,
-                        onClick = if (isRecording) onCompleteRecording else onResumeClick
-                    ),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = if (isRecording) {
-                        Icons.Default.Check
-                    } else {
-                        Icons.Default.Microphone
-                    },
-                    contentDescription = if (isRecording) {
-                        stringResource(R.string.finish_recording)
-                    } else {
-                        stringResource(R.string.resume_recording)
-                    },
-                    tint = MaterialTheme.colorScheme.onPrimaryContainer
-                )
-            }
+                },
+                primaryButtonSize = 72.dp
+            )
 
             FilledIconButton(
                 onClick = if (isRecording) onPauseClick else onResumeClick,
@@ -211,7 +185,7 @@ private fun SheetContentPreview() {
     EchoJournalTheme {
         SheetContent(
             formattedRecordDuration = "00:10:34",
-            isRecording = false,
+            isRecording = true,
             onDismiss = {},
             onPauseClick = {},
             onResumeClick = {},

@@ -1,6 +1,7 @@
 package com.chan.echojournal.echos.presentation.echos
 
 import android.Manifest
+import android.content.pm.PackageManager
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -19,6 +20,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.chan.echojournal.R
 import com.chan.echojournal.core.presentation.designystem.theme.EchoJournalTheme
@@ -26,7 +28,7 @@ import com.chan.echojournal.core.presentation.designystem.theme.bgGradient
 import com.chan.echojournal.core.presentation.util.ObserveAsEvents
 import com.chan.echojournal.echos.presentation.echos.components.EchoFilterRow
 import com.chan.echojournal.echos.presentation.echos.components.EchoList
-import com.chan.echojournal.echos.presentation.echos.components.EchoRecordFloatingActionButton
+import com.chan.echojournal.echos.presentation.echos.components.EchoQuickRecordFloatingActionButton
 import com.chan.echojournal.echos.presentation.echos.components.EchoRecordingSheet
 import com.chan.echojournal.echos.presentation.echos.components.EchosEmptyBackground
 import com.chan.echojournal.echos.presentation.echos.components.EchosTopBar
@@ -72,7 +74,7 @@ fun EchosRoot(
 
     val isAppInForeground by isAppInForeground()
     LaunchedEffect(isAppInForeground, state.recordingState) {
-        if(state.recordingState == RecordingState.NORMAL_CAPTURE && !isAppInForeground) {
+        if (state.recordingState == RecordingState.NORMAL_CAPTURE && !isAppInForeground) {
             viewModel.onAction(EchosAction.OnPauseRecordingClick)
         }
     }
@@ -88,13 +90,34 @@ fun EchosScreen(
     onAction: (EchosAction) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
     Scaffold(
         modifier = modifier,
         floatingActionButton = {
-            EchoRecordFloatingActionButton(
+            EchoQuickRecordFloatingActionButton(
                 onClick = {
-                    onAction(EchosAction.OnFabClick)
-                }
+                    onAction(EchosAction.OnRecordFabClick)
+                },
+                onLongPressStart = {
+                    val hasPermission = ContextCompat.checkSelfPermission(
+                        context,
+                        Manifest.permission.RECORD_AUDIO
+                    ) == PackageManager.PERMISSION_GRANTED
+
+                    if (hasPermission) {
+                        onAction(EchosAction.OnRecordButtonLongClick)
+                    } else {
+                        onAction(EchosAction.OnRequestPermissionQuickRecording)
+                    }
+                },
+                onLongPressEnd = { cancelledRecording ->
+                    if (cancelledRecording) {
+                        onAction(EchosAction.OnCancelRecording)
+                    } else {
+                        onAction(EchosAction.OnCompleteRecording)
+                    }
+                },
+                isQuickRecording = state.recordingState == RecordingState.QUICK_CAPTURE,
             )
         },
         topBar = {
