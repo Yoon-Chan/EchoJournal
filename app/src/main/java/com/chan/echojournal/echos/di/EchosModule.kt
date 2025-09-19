@@ -2,6 +2,7 @@ package com.chan.echojournal.echos.di
 
 import com.chan.echojournal.echos.data.recording.AndroidVoiceRecorder
 import com.chan.echojournal.echos.domain.recording.VoiceRecorder
+import com.chan.echojournal.echos.presentation.create_echo.CreateEchoViewModel
 import com.chan.echojournal.echos.presentation.echos.EchosViewModel
 import kotlinx.coroutines.CoroutineScope
 import org.koin.android.ext.koin.androidApplication
@@ -18,4 +19,5 @@ val echoModule = module {
     } bind VoiceRecorder::class
 
     viewModelOf(::EchosViewModel)
+    viewModelOf(::CreateEchoViewModel)
 }
