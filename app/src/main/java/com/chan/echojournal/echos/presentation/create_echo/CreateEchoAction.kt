@@ -4,7 +4,7 @@ import com.chan.echojournal.echos.presentation.echos.models.TrackSizeInfo
 import com.chan.echojournal.echos.presentation.models.MoodUI
 
 sealed interface CreateEchoAction {
-    data object OnNavigateBackClick : CreateEchoAction
+    data object OnNavigateBackClick: CreateEchoAction
     data class OnTitleTextChange(val text: String) : CreateEchoAction
     data class OnAddTopicTextChange(val text: String) : CreateEchoAction
     data class OnNoteTextChange(val text: String) : CreateEchoAction
@@ -21,4 +21,6 @@ sealed interface CreateEchoAction {
     data object OnSelectMoodClick : CreateEchoAction
     data class OnTrackSizeAvailable(val trackSizeInfo: TrackSizeInfo) : CreateEchoAction
     data class OnRemoveTopicClick(val topic: String) : CreateEchoAction
+    data object OnGoBack: CreateEchoAction
+    data object OnDismissConfirmLeaveDialog: CreateEchoAction
 }

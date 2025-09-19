@@ -32,7 +32,11 @@ fun NavigationRoot(
         }
 
         composable<NavigationRoute.CreateEcho> {
-            CreateEchoRoot()
+            CreateEchoRoot(
+                onConfirmLeave = {
+                    navController.navigateUp()
+                }
+            )
         }
     }
 }

@@ -37,14 +37,11 @@ class CreateEchoViewModel constructor(
     fun onAction(action: CreateEchoAction) {
         when (action) {
             is CreateEchoAction.OnAddTopicTextChange -> onAddTopicTextChange(action.text)
-            CreateEchoAction.OnCancelClick -> {}
             CreateEchoAction.OnConfirmMood -> onConfirmMood()
             CreateEchoAction.OnDismissMoodSelector -> onDismissMoodSelector()
 
             CreateEchoAction.OnDismissTopicSuggestions -> onDismissTopicSuggestion()
             is CreateEchoAction.OnMoodClick -> onClickMoodClick(action.moodUI)
-
-            CreateEchoAction.OnNavigateBackClick -> {}
             is CreateEchoAction.OnNoteTextChange -> {}
             CreateEchoAction.OnPauseAudioClick -> {}
             CreateEchoAction.OnPlayAudioClick -> {}
@@ -56,6 +53,27 @@ class CreateEchoViewModel constructor(
 
             CreateEchoAction.ShowMoodSelector -> {}
             CreateEchoAction.OnSelectMoodClick -> onSelectMoodClick()
+            CreateEchoAction.OnDismissConfirmLeaveDialog -> onDismissConfirmLeaveDialog()
+
+            CreateEchoAction.OnCancelClick,
+            CreateEchoAction.OnNavigateBackClick,
+            CreateEchoAction.OnGoBack -> onShowConfirmLeaveDialog()
+        }
+    }
+
+    private fun onDismissConfirmLeaveDialog() {
+        _state.update {
+            it.copy(
+                showConfirmLeaveDialog = false
+            )
+        }
+    }
+
+    private fun onShowConfirmLeaveDialog() {
+        _state.update {
+            it.copy(
+                showConfirmLeaveDialog = true
+            )
         }
     }
 

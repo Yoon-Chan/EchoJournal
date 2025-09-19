@@ -21,6 +21,7 @@ data class CreateEchoState(
     val playbackTotalDuration: Duration = Duration.ZERO,
     val playbackState: PlaybackState = PlaybackState.STOPPED,
     val durationPlayed: Duration = Duration.ZERO,
+    val showConfirmLeaveDialog: Boolean = false
 ) {
     val durationPlayedRatio = (durationPlayed / playbackTotalDuration).toFloat()
 }
