@@ -1,5 +1,6 @@
 package com.chan.echojournal.echos.presentation.create_echo
 
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -40,6 +41,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -56,6 +58,7 @@ import com.chan.echojournal.core.presentation.designystem.text_field.Transparent
 import com.chan.echojournal.core.presentation.designystem.theme.EchoJournalTheme
 import com.chan.echojournal.core.presentation.designystem.theme.secondary70
 import com.chan.echojournal.core.presentation.designystem.theme.secondary95
+import com.chan.echojournal.core.presentation.util.ObserveAsEvents
 import com.chan.echojournal.echos.presentation.components.EchoMoodPlayer
 import com.chan.echojournal.echos.presentation.create_echo.component.EchoTopicRow
 import com.chan.echojournal.echos.presentation.create_echo.component.SelectMoodSheet
@@ -66,7 +69,21 @@ fun CreateEchoRoot(
     onConfirmLeave: () -> Unit,
     viewModel: CreateEchoViewModel = koinViewModel()
 ) {
+    val context = LocalContext.current
     val state by viewModel.state.collectAsStateWithLifecycle()
+
+    ObserveAsEvents(viewModel.event) { event ->
+        when(event) {
+            CreateEchoEvent.FailedToSaveFile -> {
+                Toast.makeText(
+                    context,
+                    context.getString(R.string.error_couldnt_save_file),
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        }
+
+    }
 
     CreateEchoScreen(
         state = state,
