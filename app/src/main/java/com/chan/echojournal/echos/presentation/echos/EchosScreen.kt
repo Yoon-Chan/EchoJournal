@@ -26,6 +26,7 @@ import com.chan.echojournal.R
 import com.chan.echojournal.core.presentation.designystem.theme.EchoJournalTheme
 import com.chan.echojournal.core.presentation.designystem.theme.bgGradient
 import com.chan.echojournal.core.presentation.util.ObserveAsEvents
+import com.chan.echojournal.echos.domain.recording.RecordingDetails
 import com.chan.echojournal.echos.presentation.echos.components.EchoFilterRow
 import com.chan.echojournal.echos.presentation.echos.components.EchoList
 import com.chan.echojournal.echos.presentation.echos.components.EchoQuickRecordFloatingActionButton
@@ -40,6 +41,7 @@ import timber.log.Timber
 
 @Composable
 fun EchosRoot(
+    onNavigateToCreateEcho: (RecordingDetails) -> Unit,
     viewModel: EchosViewModel = koinViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -68,6 +70,7 @@ fun EchosRoot(
 
             is EchosEvent.OnDoneRecording -> {
                 Timber.d("Recording successful!")
+                onNavigateToCreateEcho(event.details)
             }
         }
     }
