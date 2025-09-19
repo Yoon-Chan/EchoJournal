@@ -1,5 +1,6 @@
 package com.chan.echojournal.echos.presentation.create_echo
 
+import com.chan.echojournal.core.presentation.designystem.dropdowns.Selectable
 import com.chan.echojournal.echos.presentation.echos.models.PlaybackState
 import com.chan.echojournal.echos.presentation.models.MoodUI
 import kotlin.time.Duration
@@ -7,12 +8,13 @@ import kotlin.time.Duration
 data class CreateEchoState(
     val titleText: String = "",
     val addTopicText: String = "",
+    val topics: List<String> = listOf(),
     val noteText: String = "",
     val showMoodSelector: Boolean = true,
     val selectedMood: MoodUI = MoodUI.NEUTRAL,
     val showTopicSuggestion: Boolean = false,
     val mood: MoodUI? = null,
-    val searchResults: List<String> = emptyList(),
+    val searchResults: List<Selectable<String>> = emptyList(),
     val showCreateTopicOption: Boolean = false,
     val canSaveEcho: Boolean = false,
     val playbackAmplitudes: List<Float> = emptyList(),
