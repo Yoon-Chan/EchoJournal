@@ -53,6 +53,7 @@ import com.chan.echojournal.core.presentation.designystem.theme.EchoJournalTheme
 import com.chan.echojournal.core.presentation.designystem.theme.secondary70
 import com.chan.echojournal.core.presentation.designystem.theme.secondary95
 import com.chan.echojournal.echos.presentation.components.EchoMoodPlayer
+import com.chan.echojournal.echos.presentation.create_echo.component.SelectMoodSheet
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -63,7 +64,7 @@ fun CreateEchoRoot(
 
     CreateEchoScreen(
         state = state,
-        onAction = {}
+        onAction = viewModel::onAction
     )
 }
 
@@ -247,6 +248,21 @@ fun CreateEchoScreen(
                             contentDescription = stringResource(R.string.save),
                             modifier = Modifier.size(16.dp)
                         )
+                    }
+                )
+            }
+
+            if(state.showMoodSelector) {
+                SelectMoodSheet(
+                    selectedMood = state.selectedMood,
+                    onMoodClick = {
+                        onAction(CreateEchoAction.OnMoodClick(it))
+                    },
+                    onDismiss = {
+                        onAction(CreateEchoAction.OnDismissMoodSelector)
+                    },
+                    onConfirmClick = {
+                        onAction(CreateEchoAction.OnConfirmMood)
                     }
                 )
             }
