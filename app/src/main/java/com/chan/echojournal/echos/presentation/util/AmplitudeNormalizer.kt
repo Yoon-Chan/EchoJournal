@@ -61,7 +61,7 @@ object AmplitudeNormalizer {
     ): List<Float> {
         val result = mutableListOf<Float>()
 
-        val step = (sourceAmplitudes.size - 1).toFloat() / targetSize
+        val step = (sourceAmplitudes.size - 1).toFloat() / (targetSize - 1)
         for (i in 0 until targetSize) {
             val pos = i * step
             val index = pos.toInt()
