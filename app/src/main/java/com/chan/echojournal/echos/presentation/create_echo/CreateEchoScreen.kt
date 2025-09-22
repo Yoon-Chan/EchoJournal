@@ -39,6 +39,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -112,7 +113,7 @@ fun CreateEchoScreen(
                 title = {
                     Text(
                         text = stringResource(R.string.new_entry),
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Center,
                     )
                 },
                 navigationIcon = {
@@ -359,12 +360,17 @@ fun CreateEchoScreen(
     }
 }
 
-@Preview
+@Preview(
+    showBackground = true
+)
 @Composable
 private fun CreateEchoScreenPreview() {
     EchoJournalTheme {
         CreateEchoScreen(
-            state = CreateEchoState(),
+            state = CreateEchoState(
+                titleText = "123",
+                addTopicText = "topic"
+            ),
             onConfirmLeave = {},
             onAction = {}
         )
