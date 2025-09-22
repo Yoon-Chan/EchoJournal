@@ -1,7 +1,9 @@
 package com.chan.echojournal.echos.di
 
+import com.chan.echojournal.echos.data.audio.AndroidAudioPlayer
 import com.chan.echojournal.echos.data.recording.AndroidVoiceRecorder
 import com.chan.echojournal.echos.data.recording.InternalRecordingStorage
+import com.chan.echojournal.echos.domain.audio.AudioPlayer
 import com.chan.echojournal.echos.domain.recording.RecordingStorage
 import com.chan.echojournal.echos.domain.recording.VoiceRecorder
 import com.chan.echojournal.echos.presentation.create_echo.CreateEchoViewModel
@@ -21,6 +23,8 @@ val echoModule = module {
             applicationScope = get<CoroutineScope>()
         )
     } bind VoiceRecorder::class
+
+    singleOf(::AndroidAudioPlayer) bind AudioPlayer::class
 
     singleOf(::InternalRecordingStorage).bind(RecordingStorage::class)
 
