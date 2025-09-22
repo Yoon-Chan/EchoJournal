@@ -44,15 +44,33 @@ class CreateEchoViewModel constructor(
     private val _event = Channel<CreateEchoEvent>()
     val event = _event.receiveAsFlow()
 
-    private val _state = MutableStateFlow(CreateEchoState(
-        playbackTotalDuration = recordingDetails.durations
-    ))
+    private val _state = MutableStateFlow(
+        CreateEchoState(
+            playbackTotalDuration = recordingDetails.durations,
+            titleText = savedStateHandle["titleText"] ?: "",
+            noteText = savedStateHandle["noteText"] ?: "",
+            topics = savedStateHandle.get<String>("topics")?.split(",") ?: emptyList(),
+            mood = savedStateHandle.get<String>("mood")?.let {
+                MoodUI.valueOf(it)
+            },
+            showMoodSelector = savedStateHandle.get<String>("mood") == null,
+            canSaveEcho = savedStateHandle.get<Boolean>("canSaveEcho") == true
+
+        )
+    )
     val state = _state
         .onStart {
             if (!hasLoadedInitialData) {
                 observeAddTopicText()
                 hasLoadedInitialData = true
             }
+        }
+        .onEach { state ->
+            savedStateHandle["titleText"] = state.titleText
+            savedStateHandle["noteText"] = state.noteText
+            savedStateHandle["topics"] = state.topics.joinToString(",")
+            savedStateHandle["mood"] = state.mood?.name
+            savedStateHandle["canSaveEcho"] = state.canSaveEcho
         }
         .stateIn(
             scope = viewModelScope,
@@ -70,7 +88,7 @@ class CreateEchoViewModel constructor(
 
             CreateEchoAction.OnDismissTopicSuggestions -> onDismissTopicSuggestion()
             is CreateEchoAction.OnMoodClick -> onClickMoodClick(action.moodUI)
-            is CreateEchoAction.OnNoteTextChange -> {}
+            is CreateEchoAction.OnNoteTextChange -> onNoteTextChange(action.text)
             CreateEchoAction.OnPauseAudioClick -> audioPlayer.pause()
             CreateEchoAction.OnPlayAudioClick -> onPlayAudioClick()
             is CreateEchoAction.OnRemoveTopicClick -> onRemoveTopicClick(action.topic)
@@ -89,12 +107,21 @@ class CreateEchoViewModel constructor(
         }
     }
 
+    private fun onNoteTextChange(text: String) {
+        _state.update {
+            it.copy(
+                noteText = text
+            )
+        }
+    }
+
     private fun onPlayAudioClick() {
-        if(state.value.playbackState == PlaybackState.PAUSED) {
+        if (state.value.playbackState == PlaybackState.PAUSED) {
             audioPlayer.resume()
         } else {
             audioPlayer.play(
-                filePath = recordingDetails.filePath ?: throw IllegalArgumentException("File path can't be null"),
+                filePath = recordingDetails.filePath
+                    ?: throw IllegalArgumentException("File path can't be null"),
                 onComplete = {
                     _state.update {
                         it.copy(
@@ -111,7 +138,7 @@ class CreateEchoViewModel constructor(
                 .onEach { track ->
                     _state.update {
                         it.copy(
-                            playbackState = if(track.isPlaying) PlaybackState.PLAYING else PlaybackState.PAUSED,
+                            playbackState = if (track.isPlaying) PlaybackState.PLAYING else PlaybackState.PAUSED,
                             durationPlayed = track.durationPlayed
                         )
                     }
@@ -129,22 +156,25 @@ class CreateEchoViewModel constructor(
                 spacing = trackSizeInfo.spacing
             )
 
-            _state.update { it.copy(
-                playbackAmplitudes = finalAmplitudes
-            ) }
+            _state.update {
+                it.copy(
+                    playbackAmplitudes = finalAmplitudes
+                )
+            }
         }
     }
 
     private fun onTitleTextChange(text: String) {
         _state.update {
             it.copy(
-                titleText = text
+                titleText = text,
+                canSaveEcho = text.isNotBlank() && it.mood != null
             )
         }
     }
 
     private fun onSaveClick() {
-        if(recordingDetails.filePath == null) {
+        if (recordingDetails.filePath == null) {
             return
         }
 
@@ -152,7 +182,7 @@ class CreateEchoViewModel constructor(
             val savedFilePath = recordingStorage.savePersistently(
                 tempFilePath = recordingDetails.filePath
             )
-            if(savedFilePath == null) {
+            if (savedFilePath == null) {
                 _event.send(CreateEchoEvent.FailedToSaveFile)
                 return@launch
             }
