@@ -13,6 +13,7 @@ data class EchoUi(
     val note: String?,
     val topics: List<String>,
     val amplitudes: List<Float>,
+    val audioFilePath: String,
     val playbackTotalDuration: Duration,
     val playbackCurrentDuration: Duration = Duration.ZERO,
     val playbackState: PlaybackState = PlaybackState.STOPPED
