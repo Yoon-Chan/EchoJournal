@@ -8,7 +8,10 @@ import com.chan.echojournal.app.navigation.NavigationRoute
 import com.chan.echojournal.core.presentation.designystem.dropdowns.Selectable.Companion.asUnselectedItems
 import com.chan.echojournal.core.presentation.util.toRecordingDetails
 import com.chan.echojournal.echos.domain.recording.RecordingStorage
+import com.chan.echojournal.echos.presentation.echos.models.TrackSizeInfo
 import com.chan.echojournal.echos.presentation.models.MoodUI
+import com.chan.echojournal.echos.presentation.util.AmplitudeNormalizer
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -64,7 +67,7 @@ class CreateEchoViewModel constructor(
             CreateEchoAction.OnSaveClick -> onSaveClick()
             is CreateEchoAction.OnTitleTextChange -> onTitleTextChange(action.text)
             is CreateEchoAction.OnTopicClick -> onTopicClick(action.topic)
-            is CreateEchoAction.OnTrackSizeAvailable -> {}
+            is CreateEchoAction.OnTrackSizeAvailable -> onTrackSizeAvailable(action.trackSizeInfo)
 
             CreateEchoAction.ShowMoodSelector -> {}
             CreateEchoAction.OnSelectMoodClick -> onSelectMoodClick()
@@ -73,6 +76,21 @@ class CreateEchoViewModel constructor(
             CreateEchoAction.OnCancelClick,
             CreateEchoAction.OnNavigateBackClick,
             CreateEchoAction.OnGoBack -> onShowConfirmLeaveDialog()
+        }
+    }
+
+    private fun onTrackSizeAvailable(trackSizeInfo: TrackSizeInfo) {
+        viewModelScope.launch(Dispatchers.Default) {
+            val finalAmplitudes = AmplitudeNormalizer.normalize(
+                sourceAmplitudes = recordingDetails.amplitudes,
+                trackWidth = trackSizeInfo.trackWidth,
+                barWidth = trackSizeInfo.barWidth,
+                spacing = trackSizeInfo.spacing
+            )
+
+            _state.update { it.copy(
+                playbackAmplitudes = finalAmplitudes
+            ) }
         }
     }
 
