@@ -64,6 +64,7 @@ import com.chan.echojournal.echos.presentation.components.EchoMoodPlayer
 import com.chan.echojournal.echos.presentation.create_echo.component.EchoTopicRow
 import com.chan.echojournal.echos.presentation.create_echo.component.SelectMoodSheet
 import org.koin.androidx.compose.koinViewModel
+import timber.log.Timber
 
 @Composable
 fun CreateEchoRoot(
@@ -81,6 +82,10 @@ fun CreateEchoRoot(
                     context.getString(R.string.error_couldnt_save_file),
                     Toast.LENGTH_LONG
                 ).show()
+            }
+
+            CreateEchoEvent.EchoSuccessfullySaved -> {
+                onConfirmLeave()
             }
         }
 
@@ -207,9 +212,11 @@ fun CreateEchoScreen(
                 durationPlayed = state.durationPlayed,
                 powerRatios = state.playbackAmplitudes,
                 onPlayClick = {
+                    Timber.e("EchoMoodPlayer onPlayClick")
                     onAction(CreateEchoAction.OnPlayAudioClick)
                 },
                 onPauseClick = {
+                    Timber.e("EchoMoodPlayer onPauseClick")
                     onAction(CreateEchoAction.OnPauseAudioClick)
                 },
                 onTrackSizeAvailable = {

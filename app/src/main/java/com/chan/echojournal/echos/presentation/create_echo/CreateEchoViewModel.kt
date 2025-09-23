@@ -8,6 +8,9 @@ import com.chan.echojournal.app.navigation.NavigationRoute
 import com.chan.echojournal.core.presentation.designystem.dropdowns.Selectable.Companion.asUnselectedItems
 import com.chan.echojournal.core.presentation.util.toRecordingDetails
 import com.chan.echojournal.echos.domain.audio.AudioPlayer
+import com.chan.echojournal.echos.domain.datasource.Echo
+import com.chan.echojournal.echos.domain.datasource.EchoDataSource
+import com.chan.echojournal.echos.domain.datasource.Mood
 import com.chan.echojournal.echos.domain.recording.RecordingStorage
 import com.chan.echojournal.echos.presentation.echos.models.PlaybackState
 import com.chan.echojournal.echos.presentation.echos.models.TrackSizeInfo
@@ -29,12 +32,15 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import timber.log.Timber
+import java.time.Instant
 import kotlin.time.Duration
 
 class CreateEchoViewModel constructor(
     private val savedStateHandle: SavedStateHandle,
     private val recordingStorage: RecordingStorage,
-    private val audioPlayer: AudioPlayer
+    private val audioPlayer: AudioPlayer,
+    private val echoDataSource: EchoDataSource
 ) : ViewModel() {
 
     private val route = savedStateHandle.toRoute<NavigationRoute.CreateEcho>()
@@ -116,6 +122,7 @@ class CreateEchoViewModel constructor(
     }
 
     private fun onPlayAudioClick() {
+        Timber.e("onPlayAudioClick ${state.value.playbackState}")
         if (state.value.playbackState == PlaybackState.PAUSED) {
             audioPlayer.resume()
         } else {
@@ -174,7 +181,7 @@ class CreateEchoViewModel constructor(
     }
 
     private fun onSaveClick() {
-        if (recordingDetails.filePath == null) {
+        if (recordingDetails.filePath == null || !state.value.canSaveEcho) {
             return
         }
 
@@ -188,6 +195,22 @@ class CreateEchoViewModel constructor(
             }
 
             //TODO: Echo
+            val currentState = state.value
+            val echo = Echo(
+                mood = currentState.mood?.let {
+                    Mood.valueOf(it.name)
+                } ?: throw IllegalStateException("Mood must be set before saving echo."),
+                title = currentState.titleText,
+                note = currentState.noteText,
+                topics = currentState.topics,
+                audioFilePath = savedFilePath,
+                audioPlaybackLength = currentState.playbackTotalDuration,
+                audioAmplitudes = recordingDetails.amplitudes,
+                recordedAt = Instant.now(),
+            )
+
+            echoDataSource.insertEcho(echo)
+            _event.send(CreateEchoEvent.EchoSuccessfullySaved)
         }
     }
 

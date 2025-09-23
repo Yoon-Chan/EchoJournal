@@ -15,7 +15,7 @@ data class CreateEchoState(
     val showTopicSuggestion: Boolean = false,
     val mood: MoodUI? = null,
     val searchResults: List<Selectable<String>> = emptyList(),
-    val showCreateTopicOption: Boolean = false,
+    val showCreateTopicOption: Boolean = true,
     val canSaveEcho: Boolean = false,
     val playbackAmplitudes: List<Float> = emptyList(),
     val playbackTotalDuration: Duration = Duration.ZERO,

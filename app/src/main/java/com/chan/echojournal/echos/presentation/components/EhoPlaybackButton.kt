@@ -29,9 +29,9 @@ fun EchoPlaybackButton(
     FilledIconButton(
         onClick =
             when (playbackState) {
-                PlaybackState.PLAYING -> onPlayClick
+                PlaybackState.PLAYING -> onPauseClick
                 PlaybackState.PAUSED,
-                PlaybackState.STOPPED -> onPauseClick
+                PlaybackState.STOPPED -> onPlayClick
             },
         colors = colors,
         modifier = modifier.defaultShadow()
