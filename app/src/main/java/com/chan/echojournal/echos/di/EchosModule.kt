@@ -10,6 +10,7 @@ import com.chan.echojournal.echos.domain.recording.RecordingStorage
 import com.chan.echojournal.echos.domain.recording.VoiceRecorder
 import com.chan.echojournal.echos.presentation.create_echo.CreateEchoViewModel
 import com.chan.echojournal.echos.presentation.echos.EchosViewModel
+import com.chan.echojournal.echos.presentation.settings.SettingsViewModel
 import kotlinx.coroutines.CoroutineScope
 import org.koin.android.ext.koin.androidApplication
 import org.koin.core.module.dsl.singleOf
@@ -31,4 +32,5 @@ val echoModule = module {
 
     viewModelOf(::EchosViewModel)
     viewModelOf(::CreateEchoViewModel)
+    viewModelOf(::SettingsViewModel)
 }

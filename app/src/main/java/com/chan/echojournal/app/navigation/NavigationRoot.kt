@@ -12,6 +12,7 @@ import androidx.navigation.compose.composable
 import com.chan.echojournal.core.presentation.util.tooCreateEchoRoute
 import com.chan.echojournal.echos.presentation.create_echo.CreateEchoRoot
 import com.chan.echojournal.echos.presentation.echos.EchosRoot
+import com.chan.echojournal.echos.presentation.settings.SettingsRoot
 
 @Composable
 fun NavigationRoot(
@@ -27,6 +28,9 @@ fun NavigationRoot(
                     navController.navigate(
                         it.tooCreateEchoRoute()
                     )
+                },
+                onNavigateToSettings = {
+                    navController.navigate(NavigationRoute.Settings)
                 }
             )
         }
@@ -34,6 +38,14 @@ fun NavigationRoot(
         composable<NavigationRoute.CreateEcho> {
             CreateEchoRoot(
                 onConfirmLeave = {
+                    navController.navigateUp()
+                }
+            )
+        }
+
+        composable<NavigationRoute.Settings> {
+            SettingsRoot(
+                onGoBack = {
                     navController.navigateUp()
                 }
             )
