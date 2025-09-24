@@ -61,7 +61,7 @@ fun EchoCard(
             }
 
             EchoMoodPlayer(
-                playbackState = PlaybackState.PLAYING,
+                playbackState = echoUi.playbackState,
                 playerProgress = { echoUi.playbackRatio },
                 durationPlayed = echoUi.playbackCurrentDuration,
                 totalPlaybackDuration = echoUi.playbackTotalDuration,
