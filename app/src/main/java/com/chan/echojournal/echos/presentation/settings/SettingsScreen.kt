@@ -27,6 +27,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.chan.echojournal.R
 import com.chan.echojournal.core.presentation.designystem.theme.EchoJournalTheme
 import com.chan.echojournal.core.presentation.designystem.theme.bgGradient
+import com.chan.echojournal.echos.presentation.models.MoodUI
+import com.chan.echojournal.echos.presentation.settings.component.MoodCard
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -39,7 +41,7 @@ fun SettingsRoot(
     SettingsScreen(
         state = state,
         onAction = { action ->
-            when(action) {
+            when (action) {
                 is SettingsAction.OnBackClick -> onGoBack()
                 else -> Unit
             }
@@ -90,7 +92,10 @@ fun SettingsScreen(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-
+            MoodCard(
+                selectMoodUI = state.selectedMood,
+                onMoodClick = { onAction(SettingsAction.OnMoodClick(it)) }
+            )
         }
     }
 }
@@ -100,7 +105,9 @@ fun SettingsScreen(
 private fun Preview() {
     EchoJournalTheme {
         SettingsScreen(
-            state = SettingsState(),
+            state = SettingsState(
+                selectedMood = MoodUI.PEACEFUL
+            ),
             onAction = {}
         )
     }
