@@ -12,6 +12,7 @@ import com.chan.echojournal.echos.domain.datasource.Echo
 import com.chan.echojournal.echos.domain.datasource.EchoDataSource
 import com.chan.echojournal.echos.domain.datasource.Mood
 import com.chan.echojournal.echos.domain.recording.RecordingStorage
+import com.chan.echojournal.echos.domain.settings.SettingPreferences
 import com.chan.echojournal.echos.presentation.echos.models.PlaybackState
 import com.chan.echojournal.echos.presentation.echos.models.TrackSizeInfo
 import com.chan.echojournal.echos.presentation.models.MoodUI
@@ -30,6 +31,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -40,7 +42,8 @@ class CreateEchoViewModel constructor(
     private val savedStateHandle: SavedStateHandle,
     private val recordingStorage: RecordingStorage,
     private val audioPlayer: AudioPlayer,
-    private val echoDataSource: EchoDataSource
+    private val echoDataSource: EchoDataSource,
+    private val settingsPreferences: SettingPreferences
 ) : ViewModel() {
 
     private val route = savedStateHandle.toRoute<NavigationRoute.CreateEcho>()
@@ -68,6 +71,7 @@ class CreateEchoViewModel constructor(
         .onStart {
             if (!hasLoadedInitialData) {
                 observeAddTopicText()
+                fetchDefaultSettings()
                 hasLoadedInitialData = true
             }
         }
@@ -83,6 +87,30 @@ class CreateEchoViewModel constructor(
             started = SharingStarted.WhileSubscribed(5_000L),
             initialValue = CreateEchoState()
         )
+
+    private fun fetchDefaultSettings() {
+        settingsPreferences
+            .observeDefaultMood()
+            .take(1)
+            .onEach { defaultMood ->
+                _state.update {
+                    it.copy(
+                        selectedMood = MoodUI.valueOf(defaultMood.name)
+                    )
+                }
+            }.launchIn(viewModelScope)
+
+        settingsPreferences
+            .observeDefaultTopics()
+            .take(1)
+            .onEach { defaultTopics ->
+                _state.update {
+                    it.copy(
+                        topics = defaultTopics
+                    )
+                }
+            }.launchIn(viewModelScope)
+    }
 
     private var durationJob: Job? = null
 

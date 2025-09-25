@@ -4,7 +4,7 @@ import com.chan.echojournal.echos.presentation.models.MoodUI
 
 sealed interface SettingsAction {
     data class OnSearchTextChange(val text: String): SettingsAction
-    data object OnCreateTopicClick: SettingsAction
+    data class OnSelectTopic(val topic: String): SettingsAction
     data class OnRemoveTopicClick(val topic: String): SettingsAction
     data object OnBackClick: SettingsAction
     data object OnDismissTopicDropDown: SettingsAction
