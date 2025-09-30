@@ -2,14 +2,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
     <application
+        android:name=".app.EchoJournalApp"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
-        android:name=".app.EchoJournalApp"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
@@ -25,7 +25,30 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+            <intent-filter>
+                <action android:name="com.chan.CREATE_ECHO" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data
+                    android:host="echojournal.com"
+                    android:path="/echos"
+                    android:scheme="https" />
+            </intent-filter>
         </activity>
+
+        <receiver
+            android:name=".app.widget.RecordEchoWidgetReceiver"
+            android:exported="true"
+            android:label="@string/create_new_entry_widget">
+
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/record_echo_widget_info" />
+        </receiver>
     </application>
 
 </manifest>
