@@ -201,7 +201,7 @@ class EchosViewModel constructor(
 
     private fun fetchNavigationArgs() {
         val startRecording = savedStateHandle.toRoute<NavigationRoute.Echos>()
-        if(startRecording.startRecording) {
+        if (startRecording.startRecording) {
             _state.update {
                 it.copy(
                     currentCaptureMethod = AudioCaptureMethod.STANDARD
@@ -319,7 +319,20 @@ class EchosViewModel constructor(
             if (recordingDetails.durations < MIN_RECORD_DURATION) {
                 eventChannel.send(EchosEvent.RecordingTooShort)
             } else {
-                eventChannel.send(EchosEvent.OnDoneRecording(recordingDetails))
+                eventChannel.send(
+                    EchosEvent.OnDoneRecording(
+                        //Arbitrary track dimensions to not make the app crash
+                        //when navigating and passing the amplitudes as an argument.
+                        details = recordingDetails.copy(
+                            amplitudes = AmplitudeNormalizer.normalize(
+                                sourceAmplitudes = recordingDetails.amplitudes,
+                                trackWidth = 10_000f,
+                                barWidth = 20f,
+                                spacing = 15f
+                            )
+                        )
+                    )
+                )
             }
         }
     }
