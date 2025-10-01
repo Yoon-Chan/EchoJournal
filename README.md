@@ -4,8 +4,7 @@
 
 Figma : https://www.figma.com/design/Mrdck7icWtTM1fysRgAmao/EchoJournal?node-id=96-10621&t=WqB0xiHR0PX5NdQS-1
 
-<img width="1920" height="1080" alt="thumbnail" src="https://github.com/user-attachments/assets/3c5fd55b-e2b6-4eff-9bd7-31f699a2147e" />
-
+<img width="1920" height="1080" alt="thumbnail" src="https://github.com/user-attachments/assets/49d846ab-a757-4c15-afbc-5bbafa9c4d47" />
 
 ##  프로젝트를 통해 얻은 경험 및 블로그 기록들
 +  해시태그 엔티티와 기록에 대한 정보인 Echo 엔티티를 분리 및 멀티테이블로 다대다 연결 작업을 통해 Topic의 정보를 가져올 때 Echo의 모든 해시태그 정보를 조회하지 않고 전체 해시태그를 가져올 수 있도록 구현
